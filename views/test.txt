@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rent a Locni Page</title>
+    <link rel="stylesheet" href="path_to_your_css" />
+  </head>
+  <body>
+    <div class="rental">
+      <h1>Rent a Locni Page</h1>
+      <div class="rentalTab">
+        <select class="form-control" onchange="fetchTerms(this.value)">
+          <option disabled value="">Select term (months)</option>
+          <% terms.forEach(function(term) { %>
+          <option value="<%= term %>"><%= term %></option>
+          <% }); %>
+        </select>
+
+        <select class="form-control" onchange="fetchCountries(this.value)">
+          <option disabled value="">Select country</option>
+          <% countries.forEach(function(country) { %>
+          <option value="<%= country.code %>"><%= country.name %></option>
+          <% }); %>
+        </select>
+
+        <select class="form-control" onchange="fetchRegions(this.value)">
+          <option disabled value="">Select region</option>
+          <% regions.forEach(function(region) { %>
+          <option value="<%= region.id %>"><%= region.name %></option>
+          <% }); %>
+        </select>
+
+        <select class="form-control" id="locality">
+          <option disabled value="">Select locality</option>
+          <% localities.forEach(function(locality) { %>
+          <option value="<%= locality.id %>"><%= locality.name %></option>
+          <% }); %>
+        </select>
+
+        <select class="form-control" id="niche">
+          <option disabled value="">Select niche</option>
+          <% niches.forEach(function(niche) { %>
+          <option value="<%= niche %>"><%= niche %></option>
+          <% }); %>
+        </select>
+
+        <button class="btn-search" onclick="searchRental()">
+          Search Rentals
+        </button>
+      </div>
+    </div>
+
+    <script src="path_to_your_javascript"></script>
+  </body>
+</html>
