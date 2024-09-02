@@ -1,0 +1,13 @@
+urls:
+  coc:
+    - https://www.chamberofcommerce.com/business-directory/{REGION}/{LOCALITY}/financial-services/tax-services/accountant
+    - https://www.chamberofcommerce.com/business-directory/{REGION}/{LOCALITY}/business-services/business-financial-services/certified-public-accountant
+    - https://www.chamberofcommerce.com/business-directory/{REGION}/{LOCALITY}/financial-services/accounting-firm
+  bbb:
+    - https://www.bbb.org/{COUNTRY}/{REGION}/{LOCALITY}/category/cpa
+  yelp:
+    - https://www.yelp.com/search?find_desc=accountants&find_loc={LOCALITY}%2C+{REGION}%2C+{COUNTRY}&cflt=accountants
+proper_niche: CPA
+plural_niche: CPAs
+proper_organization: CPA firm
+plural_organization: CPA firms

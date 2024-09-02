@@ -1,10 +1,27 @@
 const express = require('express');
 const csv = require('csv-parser');
 const fs = require('fs');
+const path = require('path');
+const yaml = require('js-yaml');
+
 const app = express();
 
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
+
+function loadNiches(directory) {
+  let niches = {};
+  fs.readdirSync(directory).forEach(file => {
+    if (path.extname(file) === '.yaml') {
+      const data = yaml.load(
+        fs.readFileSync(path.join(directory, file), 'utf8')
+      );
+      const nicheName = path.basename(file, '.yaml');
+      niches[nicheName] = data;
+    }
+  });
+  return niches;
+}
 
 let data = {};
 app.get('/', (req, res) => {
@@ -15,16 +32,10 @@ app.get('/', (req, res) => {
         data[row.region] = [];
       }
       data[row.region].push({ locality: row.locality });
-
-      //   if (!data[row.region]) {
-      //     data[row.region] = [];
-      //   }
-      //   if (!data[row.locality]) {
-      //     data[row.locality] = [];
-      //   }
     })
     .on('end', () => {
-      res.render('index', { data: data });
+      const niches = loadNiches('./niches');
+      res.render('index', { data: data, niches: niches });
     });
 });
 

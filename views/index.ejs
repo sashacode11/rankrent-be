@@ -51,10 +51,10 @@
             <option value="">Select locality</option>
         </select>
 
-        <label for="term">Niche:</label>
+        <label for="niche">Niche:</label>
         <select class="form-control" id="niche">
             <option value="">Select niche</option>
-            <% Object.keys(data).forEach(function(niche) { %>
+            <% Object.keys(niches).forEach(function(niche) { %>
             <option value="<%= niche %>"><%= niche %></option>
             <% }); %>
         </select>
