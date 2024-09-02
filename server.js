@@ -3,11 +3,18 @@ const csv = require('csv-parser');
 const fs = require('fs');
 const path = require('path');
 const yaml = require('js-yaml');
+const mysql = require('mysql');
+require('dotenv').config();
+const nodemailer = require('nodemailer');
+const bodyParser = require('body-parser');
 
 const app = express();
 
 app.set('view engine', 'ejs');
 app.use(express.static('public'));
+
+app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 function loadNiches(directory) {
   let niches = {};
@@ -23,6 +30,22 @@ function loadNiches(directory) {
   return niches;
 }
 
+const db = mysql.createConnection({
+  host: 'localhost',
+  user: 'root',
+  password: process.env.MYSQL_PASSWORD,
+  database: 'InquiritaBilling',
+});
+
+// Connect to the database
+db.connect(err => {
+  if (err) {
+    console.error('Error connecting to the database:', err);
+    return;
+  }
+  console.log('Connected to the database successfully');
+});
+
 let data = {};
 app.get('/', (req, res) => {
   fs.createReadStream('locality.csv')
@@ -35,8 +58,51 @@ app.get('/', (req, res) => {
     })
     .on('end', () => {
       const niches = loadNiches('./niches');
-      res.render('index', { data: data, niches: niches });
+      db.query(
+        'SELECT CustomerName, EmailAddress FROM Customers',
+        (err, customers) => {
+          if (err) {
+            console.error('Database query failed', err);
+          }
+          res.render('index', {
+            data: data,
+            niches: niches,
+            customers: customers,
+          });
+        }
+      );
     });
+});
+
+// Email sending route
+app.post('/send-email', async (req, res) => {
+  const recipientEmail = req.body.customerEmail;
+
+  const trannsporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: process.env.MY_EMAIL,
+      pass: process.env.MY_EMAIL_PASSWORD,
+    },
+  });
+
+  // Email options
+  const mailOptions = {
+    from: process.env.MY_EMAIL,
+    to: recipientEmail,
+    subject: 'Your Invoice Link from Inquirita',
+    text: 'Here is your invoice and link to pay: [Link Here]',
+  };
+
+  // Send the email
+  try {
+    const info = await trannsporter.sendMail(mailOptions);
+    console.log('Email sent: ' + info.response);
+    res.send('Email sent successfully to ' + recipientEmail);
+  } catch (error) {
+    console.error('Failed to send email:', error);
+    res.status(500).send('Failed to send email');
+  }
 });
 
 const PORT = 3001;

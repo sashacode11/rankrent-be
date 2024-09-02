@@ -22,45 +22,56 @@
     <div class="banner">
         <h2>Inquirita Billing</h2>
     </div>
+    <!-- <div class="rental"> -->
     <div class="rental">
       <div class="rentalTab">
-        <label for="term">Terms:</label>
-        <select class="form-control" onchange="fetchTerms(this.value)">
-          <option value="">Select term (months)</option>
-          <% ['1 month', '3 months', '6 months', '12 months'].forEach(function(term) { %>
-            <option value="<%= term %>"><%= term %></option>
-        <% }); %>        
-        </select>
-
-        <label for="term">Country:</label>
-        <select class="form-control" id="country">
-            <option value="">Select country</option>
-            <option value="US">United States</option>
-        </select>
-
-        <label for="region">Regions:</label>
-        <select id="region" class="form-control">
-          <option value="">Select region</option>
-          <% Object.keys(data).forEach(function(region) { %>
-            <option value="<%= region %>"><%= region %></option>
-          <% }); %>
-        </select>
-
-        <label for="locality">Locality:</label>
-        <select id="locality" class="form-control">
-            <option value="">Select locality</option>
-        </select>
-
-        <label for="niche">Niche:</label>
-        <select class="form-control" id="niche">
-            <option value="">Select niche</option>
-            <% Object.keys(niches).forEach(function(niche) { %>
-            <option value="<%= niche %>"><%= niche %></option>
-            <% }); %>
-        </select>
-
-        <button class="btn-search" onclick="searchRental()">Search Rentals</button>
+        <form id="emailForm" action="/send-email" method="post" class="rentalTab">
+            <label for="term">Terms:</label>
+            <select class="form-control" required>
+              <option value="">Select term (months)</option>
+              <% ['1 month', '3 months', '6 months', '12 months'].forEach(function(term) { %>
+                <option value="<%= term %>"><%= term %></option>
+            <% }); %>        
+            </select>
     
+            <label for="term">Country:</label>
+            <select class="form-control" id="country" required>
+                <option value="">Select country</option>
+                <option value="US">United States</option>
+            </select>
+    
+            <label for="region">Regions:</label>
+            <select id="region" class="form-control" required>
+              <option value="">Select region</option>
+              <% Object.keys(data).forEach(function(region) { %>
+                <option value="<%= region %>"><%= region %></option>
+              <% }); %>
+            </select>
+    
+            <label for="locality">Locality:</label>
+            <select id="locality" class="form-control" required>
+                <option value="">Select locality</option>
+            </select>
+    
+            <label for="niche">Niche:</label>
+            <select class="form-control" id="niche" required>
+                <option value="">Select niche</option>
+                <% Object.keys(niches).forEach(function(niche) { %>
+                    <option value="<%= niche %>"><%= niche %></option>
+                <% }); %>
+            </select>
+    
+            <label for="customerEmail">Select a Customer to Send an Email:</label>
+            <select class="form-control" id="customerEmail" name="customerEmail" required>
+                <option value="">Select a Customer</option>
+                <% customers.forEach(function(customer) { %>
+                    <option value="<%= customer.EmailAddress %>"><%= customer.CustomerName %> - <%= customer.EmailAddress %></option>
+                <% }); %>
+            </select>
+    
+            <button class="btn-search" type="submit">Send Email</button>
+        </form>
+    </div>
         <div id="serverData" data-all-data='<%- JSON.stringify(data) %>' style="display:none;"></div>
 
         <script src="/js/region-handler.js"></script>
