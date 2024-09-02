@@ -30,20 +30,25 @@
             <option value="US">United States</option>
         </select>
 
-        <label for="term">Regions:</label>
-        <select class="form-control" onchange="fetchRegions(this.value)">
+        <label for="region">Regions:</label>
+        <select id="region" class="form-control">
           <option value="">Select region</option>
           <% Object.keys(data).forEach(function(region) { %>
-          <option value="<%= region %>"><%= region %></option>
+            <option value="<%= region %>"><%= region %></option>
           <% }); %>
         </select>
 
-        <label for="term">Locality:</label>
+        <!-- <label for="term">Locality:</label>
         <select class="form-control" id="locality">
-            <option value="">Select locality</option>
-            <% Object.keys(data).forEach(function(locality) { %>
+          <option value="">Select locality</option>
+          <% Object.keys(data).forEach(function(locality) { %>
             <option value="<%= locality %>"><%= locality %></option>
-            <% }); %>
+          <% }); %>
+        </select> -->
+
+        <label for="locality">Locality:</label>
+        <select id="locality" class="form-control">
+            <option value="">Select locality</option>
         </select>
 
         <label for="term">Niche:</label>
@@ -56,6 +61,28 @@
 
         <button class="btn-search" onclick="searchRental()">Search Rentals</button>
     
-        <script src="/js/region-handler.js"></script>
+        <div id="serverData" data-all-data='<%- JSON.stringify(data) %>' style="display:none;"></div>
+
+        <!-- <script src="/js/region-handler.js"></script> -->
+         <script>
+        // const allData = <%- JSON.stringify(data) %>;
+        const serverDataElement = document.getElementById('serverData');
+        const allData = JSON.parse(serverDataElement.getAttribute('data-all-data'));
+
+        document.getElementById('region').addEventListener('change', function() {
+        const selectedRegion = this.value;
+        const localitySelect = document.getElementById('locality');
+
+        // Clear the previous locality options
+        localitySelect.innerHTML = '<option value="">Select locality</option>';
+
+        if (selectedRegion && allData[selectedRegion]) {
+            allData[selectedRegion].forEach(function(item) {
+            const option = new Option(item.locality, item.locality);
+            localitySelect.add(option);
+                });
+            }
+        });
+         </script>
     </body>
 </html>
