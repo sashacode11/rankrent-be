@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Rent a Locni Page</title>
     <link rel="stylesheet" href="/css/styles.css">
+
+    <!-- JQuery cdn -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+    <!-- select2 cdn -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
   </head>
   <body>
     
@@ -38,14 +46,6 @@
           <% }); %>
         </select>
 
-        <!-- <label for="term">Locality:</label>
-        <select class="form-control" id="locality">
-          <option value="">Select locality</option>
-          <% Object.keys(data).forEach(function(locality) { %>
-            <option value="<%= locality %>"><%= locality %></option>
-          <% }); %>
-        </select> -->
-
         <label for="locality">Locality:</label>
         <select id="locality" class="form-control">
             <option value="">Select locality</option>
@@ -63,26 +63,6 @@
     
         <div id="serverData" data-all-data='<%- JSON.stringify(data) %>' style="display:none;"></div>
 
-        <!-- <script src="/js/region-handler.js"></script> -->
-         <script>
-        // const allData = <%- JSON.stringify(data) %>;
-        const serverDataElement = document.getElementById('serverData');
-        const allData = JSON.parse(serverDataElement.getAttribute('data-all-data'));
-
-        document.getElementById('region').addEventListener('change', function() {
-        const selectedRegion = this.value;
-        const localitySelect = document.getElementById('locality');
-
-        // Clear the previous locality options
-        localitySelect.innerHTML = '<option value="">Select locality</option>';
-
-        if (selectedRegion && allData[selectedRegion]) {
-            allData[selectedRegion].forEach(function(item) {
-            const option = new Option(item.locality, item.locality);
-            localitySelect.add(option);
-                });
-            }
-        });
-         </script>
+        <script src="/js/region-handler.js"></script>
     </body>
 </html>

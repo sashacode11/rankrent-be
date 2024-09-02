@@ -1,20 +1,36 @@
-function updateRegions(countryCode) {
-  const regionSelect = document.getElementById('region');
-  if (countryCode === 'US') {
-    fetch('/regions/us')
-      .then(response => response.json())
-      .then(regions => {
-        regionSelect.innerHTML = '<option value="">Select region</option>';
-        regions.forEach(region => {
-          regionSelect.innerHTML += `<option value="${region}">${region}</option>`;
+document.addEventListener('DOMContentLoaded', function () {
+  const serverDataElement = document.getElementById('serverData');
+  const allData = JSON.parse(serverDataElement.getAttribute('data-all-data'));
+
+  $(document).ready(function () {
+    $('#region')
+      .select2()
+      .on('change', function () {
+        var selectedRegion = $(this).val();
+        var localitySelect = $('#locality');
+
+        // Clear the previous locality options
+        localitySelect.empty().append(new Option('Select locality', ''));
+
+        if (selectedRegion && allData[selectedRegion]) {
+          allData[selectedRegion].forEach(function (item) {
+            localitySelect.append(new Option(item.locality, item.locality));
+          });
+        }
+
+        // Reinitialize Select2 for the locality select element
+        localitySelect.select2({
+          width: '100%',
+          placeholder: 'Select a locality',
+          allowClear: true,
         });
-      })
-      .catch(error => {
-        console.error('Error fetching regions:', error);
-        regionSelect.innerHTML =
-          '<option value="">Error loading regions</option>';
       });
-  } else {
-    regionSelect.innerHTML = '<option value="">No regions available</option>';
-  }
-}
+
+    // Initial Select2 setup for locality, in case it's not dynamically updated at first
+    $('#locality').select2({
+      width: '100%',
+      placeholder: 'Select a locality',
+      allowClear: true,
+    });
+  });
+});
