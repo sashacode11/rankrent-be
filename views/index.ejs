@@ -6,14 +6,21 @@
   <div class="rentalTab">
     <form id="emailForm" action="/send-email" method="post" class="rentalTab">
         <label for="term">Terms:</label>
-        <select class="form-control" required>
+        <!-- <select class="form-control" required>
           <option value="">Select term (months)</option>
           <% ['1 month', '3 months', '6 months', '12 months'].forEach(function(term) { %>
             <option value="<%= term %>"><%= term %></option>
         <% }); %>        
+        </select> -->
+
+        <select class="form-control" id="termSelect" name="term" required onchange="updateAmount()">
+            <option value="">Select term (months)</option>
+            <% terms.forEach(function(term) { %>
+                <option value="<%= term.term %>"><%= term.term %> - US$<%= term.amount %></option>
+            <% }); %>
         </select>
 
-        <label for="term">Country:</label>
+        <label for="country">Country:</label>
         <select class="form-control" id="country" required>
             <option value="">Select country</option>
             <option value="US">United States</option>
@@ -52,5 +59,8 @@
     </form>
 </div>
 
+<div id="termsData" style="display:none;" data-terms='<%= JSON.stringify(terms) %>'></div>
+
 <div id="serverData" data-all-data='<%- JSON.stringify(data) %>' style="display:none;"></div>
+
 

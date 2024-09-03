@@ -34,19 +34,47 @@ router.get('/', (req, res) => {
     })
     .on('end', () => {
       const niches = loadNiches('./niches');
-      connectDB.query(
-        'SELECT CustomerName, EmailAddress FROM Customers',
-        (err, customers) => {
-          if (err) {
-            console.error('Database query failed', err);
-          }
-          res.render('index', {
-            data: data,
-            niches: niches,
-            customers: customers,
-          });
+      //   connectDB.query(
+      //     'SELECT CustomerName, EmailAddress FROM Customers',
+      //     (err, customers) => {
+      //       if (err) {
+      //         console.error('Database query failed', err);
+      //       }
+      //       res.render('index', {
+      //         data: data,
+      //         niches: niches,
+      //         customers: customers,
+      //       });
+      //     }
+      //   );
+
+      // First query
+      connectDB.query('SELECT term, amount FROM TermAmounts', (err, terms) => {
+        if (err) {
+          console.error('Database query for terms failed:', err);
+          return; // Stop further execution in case of an error
         }
-      );
+
+        // Second query inside the callback of the first
+        connectDB.query(
+          'SELECT CustomerName, EmailAddress FROM Customers',
+          (err, customers) => {
+            if (err) {
+              console.error('Database query for customers failed:', err);
+              return; // Stop further execution in case of an error
+            }
+            console.log('Terms and amounts data:', terms);
+
+            // Rendering happens only after both queries have completed
+            res.render('index', {
+              data: data, // Ensure 'data' is defined somewhere in your code
+              niches: niches,
+              customers: customers,
+              terms: terms,
+            });
+          }
+        );
+      });
     });
 });
 
