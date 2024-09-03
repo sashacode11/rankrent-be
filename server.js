@@ -4,10 +4,11 @@ const csv = require('csv-parser');
 const fs = require('fs');
 const path = require('path');
 const yaml = require('js-yaml');
-const mysql = require('mysql');
 require('dotenv').config();
 const nodemailer = require('nodemailer');
 const bodyParser = require('body-parser');
+
+const connectDB = require('./server/config/db');
 
 const app = express();
 
@@ -35,22 +36,23 @@ function loadNiches(directory) {
   return niches;
 }
 
-const db = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: process.env.MYSQL_PASSWORD,
-  database: 'InquiritaBilling',
-});
+// const db = mysql.createConnection({
+//   host: 'localhost',
+//   user: 'root',
+//   password: process.env.MYSQL_PASSWORD,
+//   database: 'InquiritaBilling',
+// });
 
-// Connect to the database
-db.connect(err => {
-  if (err) {
-    console.error('Error connecting to the database:', err);
-    return;
-  }
-  console.log('Connected to the database successfully');
-});
+// // Connect to the database
+// db.connect(err => {
+//   if (err) {
+//     console.error('Error connecting to the database:', err);
+//     return;
+//   }
+//   console.log('Connected to the database successfully');
+// });
 
+// Connect DB
 let data = {};
 app.get('/', (req, res) => {
   fs.createReadStream('locality.csv')
@@ -63,7 +65,7 @@ app.get('/', (req, res) => {
     })
     .on('end', () => {
       const niches = loadNiches('./niches');
-      db.query(
+      connectDB.query(
         'SELECT CustomerName, EmailAddress FROM Customers',
         (err, customers) => {
           if (err) {
