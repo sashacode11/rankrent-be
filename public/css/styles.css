@@ -139,6 +139,10 @@ select.form-control:focus {
     max-width: 150px;
     margin-left: auto;
   }
+
+  .modal-content {
+    right: 20px !important;
+  }
 }
 
 .send-email-container {
@@ -166,3 +170,59 @@ select.form-control:focus {
   background: #e6f1fc;
   transition: background 0.2s;
 }
+
+/* card-subtotal START*/
+.modal {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-content {
+  background: white;
+  padding: 20px;
+  border-radius: 5px;
+  width: 300px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+  position: absolute;
+  display: inline-grid;
+  top: 20px;
+  right: 50%;
+  transform: translateX(-125px);
+}
+
+.close {
+  float: right;
+  cursor: pointer;
+}
+
+.product,
+.price,
+.tax,
+.checkout {
+  margin-top: 10px;
+}
+
+.modal-menu,
+.modal-subtotal {
+  border-bottom: 1px solid #e1e1e1;
+  padding: 22px 24px;
+}
+
+/* button {
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+} */
+/* card-subtotal END */

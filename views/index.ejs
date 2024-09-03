@@ -16,9 +16,11 @@
         <select class="form-control" id="termSelect" name="term" required onchange="updateAmount()">
             <option value="">Select term (months)</option>
             <% terms.forEach(function(term) { %>
-                <option value="<%= term.term %>"><%= term.term %> - US$<%= term.amount %></option>
+                <option value="<%= term.term %>" data-amount="<%= term.amount %>">
+                    <%= term.term %> - US$<%= term.amount %>
+                </option>
             <% }); %>
-        </select>
+        </select>        
 
         <label for="country">Country:</label>
         <select class="form-control" id="country" required>
@@ -55,9 +57,28 @@
             <% }); %>
         </select>
 
-        <button class="btn-search" type="submit">Send Email</button>
+        <button class="btn-search" type="submit">Add</button>
     </form>
 </div>
+
+<div id="modal" class="modal" style="display:none;">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2>Order Summary</h2>
+        <div class="modal-menu">
+            <p id="modalCustomer"></p>
+            <p id="modalRegion"></p>
+            <p id="modalNiche"></p>
+            <p id="modalLocality"></p>
+        </div>
+        <div class="modal-subtotal">
+            <p id="modalTerm"></p>
+            <p id="modalSubtotal"></p> 
+        </div>
+        <button class="btn-search" onclick="confirmSubmission()">Confirm and Send Email</button>
+    </div>
+</div>
+
 
 <div id="termsData" style="display:none;" data-terms='<%= JSON.stringify(terms) %>'></div>
 

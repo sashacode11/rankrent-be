@@ -61,13 +61,13 @@ router.get('/', (req, res) => {
           (err, customers) => {
             if (err) {
               console.error('Database query for customers failed:', err);
-              return; // Stop further execution in case of an error
+              return;
             }
-            console.log('Terms and amounts data:', terms);
+            // console.log('Terms and amounts data:', terms);
 
             // Rendering happens only after both queries have completed
             res.render('index', {
-              data: data, // Ensure 'data' is defined somewhere in your code
+              data: data,
               niches: niches,
               customers: customers,
               terms: terms,
