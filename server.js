@@ -1,3 +1,4 @@
+const expressLayout = require('express-ejs-layouts');
 const express = require('express');
 const csv = require('csv-parser');
 const fs = require('fs');
@@ -10,7 +11,11 @@ const bodyParser = require('body-parser');
 
 const app = express();
 
+// Templating engine
+app.use(expressLayout);
 app.set('view engine', 'ejs');
+app.set('layout', './layouts/main');
+
 app.use(express.static('public'));
 
 app.use(express.json());
@@ -98,11 +103,19 @@ app.post('/send-email', async (req, res) => {
   try {
     const info = await trannsporter.sendMail(mailOptions);
     console.log('Email sent: ' + info.response);
-    res.send('Email sent successfully to ' + recipientEmail);
+    // res.send('Email sent successfully to ' + recipientEmail);
+    res.redirect(
+      '/send-email-status?email=' + encodeURIComponent(recipientEmail)
+    );
   } catch (error) {
     console.error('Failed to send email:', error);
     res.status(500).send('Failed to send email');
   }
+});
+
+app.get('/send-email-status', (req, res) => {
+  const recipientEmail = req.query.email;
+  res.render('send-email-status', { recipientEmail });
 });
 
 const PORT = 3001;

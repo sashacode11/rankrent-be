@@ -1,79 +1,56 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Rent a Locni Page</title>
-    <link rel="stylesheet" href="/css/styles.css">
+<div class="banner">
+    <h2>Inquirita Billing</h2>
+</div>
 
-    <!-- JQuery cdn -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<div class="rental">
+  <div class="rentalTab">
+    <form id="emailForm" action="/send-email" method="post" class="rentalTab">
+        <label for="term">Terms:</label>
+        <select class="form-control" required>
+          <option value="">Select term (months)</option>
+          <% ['1 month', '3 months', '6 months', '12 months'].forEach(function(term) { %>
+            <option value="<%= term %>"><%= term %></option>
+        <% }); %>        
+        </select>
 
-    <!-- select2 cdn -->
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+        <label for="term">Country:</label>
+        <select class="form-control" id="country" required>
+            <option value="">Select country</option>
+            <option value="US">United States</option>
+        </select>
 
-  </head>
-  <body>
-    
-    <nav class="header">
-        <a href="/" class="header-brand">Inquirita</a>
-    </nav>
-    <div class="banner">
-        <h2>Inquirita Billing</h2>
-    </div>
-    <!-- <div class="rental"> -->
-    <div class="rental">
-      <div class="rentalTab">
-        <form id="emailForm" action="/send-email" method="post" class="rentalTab">
-            <label for="term">Terms:</label>
-            <select class="form-control" required>
-              <option value="">Select term (months)</option>
-              <% ['1 month', '3 months', '6 months', '12 months'].forEach(function(term) { %>
-                <option value="<%= term %>"><%= term %></option>
-            <% }); %>        
-            </select>
-    
-            <label for="term">Country:</label>
-            <select class="form-control" id="country" required>
-                <option value="">Select country</option>
-                <option value="US">United States</option>
-            </select>
-    
-            <label for="region">Regions:</label>
-            <select id="region" class="form-control" required>
-              <option value="">Select region</option>
-              <% Object.keys(data).forEach(function(region) { %>
-                <option value="<%= region %>"><%= region %></option>
-              <% }); %>
-            </select>
-    
-            <label for="locality">Locality:</label>
-            <select id="locality" class="form-control" required>
-                <option value="">Select locality</option>
-            </select>
-    
-            <label for="niche">Niche:</label>
-            <select class="form-control" id="niche" required>
-                <option value="">Select niche</option>
-                <% Object.keys(niches).forEach(function(niche) { %>
-                    <option value="<%= niche %>"><%= niche %></option>
-                <% }); %>
-            </select>
-    
-            <label for="customerEmail">Select a Customer to Send an Email:</label>
-            <select class="form-control" id="customerEmail" name="customerEmail" required>
-                <option value="">Select a Customer</option>
-                <% customers.forEach(function(customer) { %>
-                    <option value="<%= customer.EmailAddress %>"><%= customer.CustomerName %> - <%= customer.EmailAddress %></option>
-                <% }); %>
-            </select>
-    
-            <button class="btn-search" type="submit">Send Email</button>
-        </form>
-    </div>
-        <div id="serverData" data-all-data='<%- JSON.stringify(data) %>' style="display:none;"></div>
+        <label for="region">Regions:</label>
+        <select id="region" class="form-control" required>
+          <option value="">Select region</option>
+          <% Object.keys(data).forEach(function(region) { %>
+            <option value="<%= region %>"><%= region %></option>
+          <% }); %>
+        </select>
 
-        <script src="/js/region-handler.js"></script>
-    </body>
-</html>
+        <label for="locality">Locality:</label>
+        <select id="locality" class="form-control" required>
+            <option value="">Select locality</option>
+        </select>
+
+        <label for="niche">Niche:</label>
+        <select class="form-control" id="niche" required>
+            <option value="">Select niche</option>
+            <% Object.keys(niches).forEach(function(niche) { %>
+                <option value="<%= niche %>"><%= niche %></option>
+            <% }); %>
+        </select>
+
+        <label for="customerEmail">Select a Customer to Send an Email:</label>
+        <select class="form-control" id="customerEmail" name="customerEmail" required>
+            <option value="">Select a Customer</option>
+            <% customers.forEach(function(customer) { %>
+                <option value="<%= customer.EmailAddress %>"><%= customer.CustomerName %> - <%= customer.EmailAddress %></option>
+            <% }); %>
+        </select>
+
+        <button class="btn-search" type="submit">Send Email</button>
+    </form>
+</div>
+
+<div id="serverData" data-all-data='<%- JSON.stringify(data) %>' style="display:none;"></div>
+
