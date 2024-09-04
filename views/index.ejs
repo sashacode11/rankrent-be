@@ -4,7 +4,7 @@
 
 <div class="rental">
   <div class="rentalTab">
-    <form id="emailForm" action="/send-email" method="post" class="rentalTab">
+    <form id="emailForm" method="post" class="rentalTab">
         <label for="term">Terms:</label>
         <!-- <select class="form-control" required>
           <option value="">Select term (months)</option>
@@ -61,23 +61,46 @@
     </form>
 </div>
 
-<div id="modal" class="modal" style="display:none;">
+<form id="modal" class="modal" action="/send-email" method="post" style="display:none;">
     <div class="modal-content">
-        <span class="close" onclick="closeModal()">&times;</span>
-        <h2>Order Summary</h2>
-        <div class="modal-menu">
-            <p id="modalCustomer"></p>
-            <p id="modalRegion"></p>
-            <p id="modalNiche"></p>
-            <p id="modalLocality"></p>
+        <div class="modal-header">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div class="modal-title">
+                <h2>Order Summary</h2>
+            </div>
         </div>
-        <div class="modal-subtotal">
-            <p id="modalTerm"></p>
-            <p id="modalSubtotal"></p> 
+        <div class="modal-body">
+            <div class="modal-row">
+                <span class="label">Term Selected:</span>
+                <span class="value" id="modalTerm"></span>
+            </div>
+            <div class="modal-row">
+                <span class="label">Region:</span>
+                <span class="value" id="modalRegion"></span>
+            </div>
+            <div class="modal-row">
+                <span class="label">Niche:</span>
+                <span class="value" id="modalNiche"></span>
+            </div>
+            <div class="modal-row">
+                <span class="label">Locality:</span>
+                <span class="value" id="modalLocality"></span>
+            </div>
         </div>
-        <button class="btn-search" onclick="confirmSubmission()">Confirm and Send Email</button>
+        <div class="modal-footer">
+            <div class="modal-row modal-email">
+                <span class="label">Customer Email:</span>
+                <span class="value" id="modalCustomer"></span>
+            </div>
+            <div class="modal-row modal-subtotal">
+                <span class="label">Subtotal:</span>
+                <span class="value" id="modalSubtotal"></span>
+            </div>
+            <button class="btn-search modal-btn" type="submit">Confirm and Send Email</button>
+        </div>
     </div>
-</div>
+</form>
+
 
 
 <div id="termsData" style="display:none;" data-terms='<%= JSON.stringify(terms) %>'></div>
