@@ -13,11 +13,11 @@
         <% }); %>        
         </select> -->
 
-        <select class="form-control" id="termSelect" name="term" required onchange="updateAmount()">
+        <select class="form-control" id="termSelect" name="term" required>
             <option value="">Select term (months)</option>
             <% terms.forEach(function(term) { %>
-                <option value="<%= term.term %>" data-amount="<%= term.amount %>">
-                    <%= term.term %> - US$<%= term.amount %>
+                <option value="<%= term.termId %>" data-multiplier="<%= term.amount %>">
+                    <%= term.term %>
                 </option>
             <% }); %>
         </select>        
@@ -44,8 +44,10 @@
         <label for="niche">Niche:</label>
         <select class="form-control" id="niche" required>
             <option value="">Select niche</option>
-            <% Object.keys(niches).forEach(function(niche) { %>
-                <option value="<%= niche %>"><%= niche %></option>
+            <% locniPricing.forEach(function(item) { %>
+                <option value="<%= item.locniId %>" data-base-price="<%= item.amount %>">
+                    <%= item.locniType %> - US$<%= item.amount %>
+                </option>
             <% }); %>
         </select>
 
@@ -88,9 +90,18 @@
             </div>
         </div>
         <div class="modal-footer">
+            <!-- Add hidden inputs inside the form for term, region, niche, and locality -->
+            <input type="hidden" name="term" id="hiddenTerm">
+            <input type="hidden" name="region" id="hiddenRegion">
+            <input type="hidden" name="niche" id="hiddenNiche">
+            <input type="hidden" name="locality" id="hiddenLocality">
+            <input type="hidden" id="hiddenSubtotal" name="subtotal">
+
             <div class="modal-row modal-email">
                 <span class="label">Customer Email:</span>
                 <span class="value" id="modalCustomer"></span>
+                 <!-- Hidden input to hold the email -->
+                <input type="hidden" id="modalCustomerEmail" name="customerEmail" value="">
             </div>
             <div class="modal-row modal-subtotal">
                 <span class="label">Subtotal:</span>

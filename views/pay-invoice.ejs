@@ -1,0 +1,98 @@
+<h1>Invoice Details</h1>
+<p>Term: <%= term %></p>
+<p>Region: <%= region %></p>
+<p>Niche: <%= niche %></p>
+<p>Locality: <%= locality %></p>
+<p>Subtotal: <%= subtotal %></p>
+
+
+<!-- Google Pay Integration -->
+<div id="google-pay-button"></div>
+
+<script>
+function onGooglePayLoaded() {
+    const paymentsClient = new google.payments.api.PaymentsClient({environment: 'TEST'});
+    initGooglePay(paymentsClient);
+}
+
+function initGooglePay(paymentsClient) {
+    const paymentDataRequest = {
+        apiVersion: 2,
+        apiVersionMinor: 0,
+        allowedPaymentMethods: [
+            {
+                type: 'CARD',
+                parameters: {
+                    allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
+                    allowedCardNetworks: ['AMEX', 'DISCOVER', 'JCB', 'MASTERCARD', 'VISA']
+                },
+                tokenizationSpecification: {
+                    type: 'PAYMENT_GATEWAY',
+                    parameters: {
+                        gateway: 'example',
+                        gatewayMerchantId: 'exampleGatewayMerchantId'
+                    }
+                }
+            }
+        ],
+        merchantInfo: {
+            merchantId: '12345678901234567890',
+            merchantName: 'Demo Merchant'
+        },
+        transactionInfo: {
+            totalPriceStatus: 'FINAL',
+            totalPrice: '123.45',
+            currencyCode: 'USD',
+            countryCode: 'US'
+        }
+    };
+
+    paymentsClient.isReadyToPay(paymentDataRequest).then(function(response) {
+        if (response.result) {
+            addGooglePayButton(paymentsClient);
+        }
+    }).catch(function(err) {
+        console.error('Error determining readiness for Google Pay:', err);
+    });
+}
+
+function addGooglePayButton(paymentsClient) {
+    const button = paymentsClient.createButton({
+        onClick: () => { onGooglePayButtonClicked(paymentsClient); }
+    });
+    document.getElementById('google-pay-button').appendChild(button);
+}
+
+function onGooglePayButtonClicked(paymentsClient) {
+    const paymentDataRequest = getGooglePaymentDataRequest();
+    paymentsClient.loadPaymentData(paymentDataRequest)
+    .then(function(paymentData) {
+        // Handle the response
+        processPayment(paymentData);
+    }).catch(function(err) {
+        console.error('Error loading payment data:', err);
+    });
+}
+
+function processPayment(paymentData) {
+    // Extract the payment token
+    const paymentToken = paymentData.paymentMethodData.tokenizationData.token;
+
+    // Send the token to your server for processing
+    fetch('/process-payment', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ token: paymentToken })
+    }).then(response => response.json())
+    .then(data => {
+        console.log('Payment successful:', data);
+    }).catch(error => {
+        console.error('Payment processing error:', error);
+    });
+}
+
+</script>
+
+<script src="https://pay.google.com/gp/p/js/pay.js" onload="onGooglePayLoaded()"></script>

@@ -151,7 +151,7 @@ select.form-control:focus {
   }
 }
 
-/* .send-email-container {
+.send-email-container {
   background-color: #fff;
   border-radius: 8px;
   padding: 40px;
@@ -175,7 +175,7 @@ select.form-control:focus {
 .send-email-container a:hover {
   background: #e6f1fc;
   transition: background 0.2s;
-} */
+}
 
 /* modal-subtotal START*/
 .modal {
@@ -252,19 +252,9 @@ select.form-control:focus {
 
 .value {
   text-align: right;
-  flex: 1;
+  /* flex: 1; */
   font-size: 1em;
 }
-/* 
-.btn-search {
-  background-color: #0071bc;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-} */
 
 .close {
   float: right;

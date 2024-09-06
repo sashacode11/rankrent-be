@@ -1,0 +1,65 @@
+<!-- views/invoice-email.ejs -->
+<html>
+<head>
+    <style>
+        .email-container {
+            /* font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px; */
+
+            font-family: 'Open Sans', sans-serif;
+            font-size: 18px;
+            line-height: 24px;
+            font-weight: 400;
+            font-style: normal;
+            color: #2c2c2e !important;
+            padding: 0;
+            border-spacing: 0;
+            border-collapse: collapse;
+        }
+
+        .btn-search {
+            /* background-color: #0071bc;
+            border: none;
+            border-radius: 20px;
+            padding: 10px 15px;
+            font-size: 1.5rem;
+            color: #fff;
+            cursor: pointer;
+            text-align: center;
+            color: black; */
+
+            font-family: Montserrat, sans-serif;
+            line-height: 62px;
+            border-radius: 8px;
+            display: table;
+            width: 269px;
+            text-align: center;
+            background: linear-gradient(94deg, #ffb45c 4.92%, #ff8c34 94.42%);
+            text-decoration: none !important;
+            font-size: 20px !important;
+            font-weight: 700 !important;
+            color: #000 !important;
+            margin: 31px auto 48px !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <h2>Your Invoice Details</h2>
+        <p>Hello,</p>
+        <p>Please review your order details and proceed to payment:</p>
+        <ul>
+            <li><strong>Term:</strong> <%= term %></li>
+            <li><strong>Region:</strong> <%= region %></li>
+            <li><strong>Niche:</strong> <%= niche %></li>
+            <li><strong>Locality:</strong> <%= locality %></li>
+            <li><strong>Subtotal:</strong> US$ <%= subtotal %></li>
+        </ul>
+        <p><a href="<%= paymentLink %>" class="btn-search">Pay Now ></a></p>
+    </div>
+</body>
+</html>
