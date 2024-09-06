@@ -107,6 +107,13 @@ router.post('/send-email', async (req, res) => {
       pass: process.env.MY_EMAIL_PASSWORD,
     },
   });
+  const paymentLink = `http://localhost:3001/pay-invoice?term=${encodeURIComponent(
+    req.body.term
+  )}&region=${encodeURIComponent(req.body.region)}&niche=${encodeURIComponent(
+    req.body.niche
+  )}&locality=${encodeURIComponent(
+    req.body.locality
+  )}&subtotal=${encodeURIComponent(req.body.subtotal)}`;
 
   try {
     // Render the EJS file to HTML
@@ -116,14 +123,9 @@ router.post('/send-email', async (req, res) => {
       niche: req.body.niche,
       locality: req.body.locality,
       subtotal: req.body.subtotal,
-      paymentLink: `http://localhost:3001/pay-invoice?term=${encodeURIComponent(
-        req.body.term
-      )}&region=${encodeURIComponent(
-        req.body.region
-      )}&niche=${encodeURIComponent(
-        req.body.niche
-      )}&locality=${encodeURIComponent(req.body.locality)}`,
+      paymentLink: paymentLink,
     });
+    // console.log('Payment Link:', paymentLink);
 
     // Prepare the email options
     const mailOptions = {
@@ -151,12 +153,15 @@ router.get('/send-email-status', (req, res) => {
 });
 
 router.get('/pay-invoice', (req, res) => {
-  // Render the payment page with details passed via query parameters
+  const { term, region, niche, locality, subtotal } = req.query;
+  //   console.log('Subtotal from query:', subtotal);
+
   res.render('pay-invoice', {
-    term: req.query.term,
-    region: req.query.region,
-    niche: req.query.niche,
-    locality: req.query.locality,
+    term,
+    region,
+    niche,
+    locality,
+    subtotal,
   });
 });
 
