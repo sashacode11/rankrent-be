@@ -103,7 +103,7 @@ function getGooglePaymentDataRequest() {
       },
     ],
     merchantInfo: {
-      merchantId: '12345678901234567890',
+      merchantId: '12345678901234567890', //replace with your google merchant id with need to verify your website
       merchantName: 'Demo Merchant',
     },
     transactionInfo: {
