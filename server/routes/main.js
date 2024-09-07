@@ -107,7 +107,7 @@ router.post('/send-email', async (req, res) => {
       pass: process.env.MY_EMAIL_PASSWORD,
     },
   });
-  const paymentLink = `http://localhost:3001/pay-invoice?term=${encodeURIComponent(
+  const paymentLink = `https://localhost:3001/pay-invoice?term=${encodeURIComponent(
     req.body.term
   )}&region=${encodeURIComponent(req.body.region)}&niche=${encodeURIComponent(
     req.body.niche
@@ -163,6 +163,46 @@ router.get('/pay-invoice', (req, res) => {
     locality,
     subtotal,
   });
+});
+
+// Apple Pay
+router.post('/validate-merchant', (req, res) => {
+  const applePayValidationURL = req.body.validationURL;
+
+  const options = {
+    hostname: new URL(applePayValidationURL).hostname,
+    path: new URL(applePayValidationURL).pathname,
+    method: 'POST',
+    key: fs.readFileSync(path.join(__dirname, 'keys', 'merchant.key')),
+    cert: fs.readFileSync(path.join(__dirname, 'keys', 'merchant.crt')),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  };
+
+  const appleRequest = https.request(options, appleResponse => {
+    let data = '';
+    appleResponse.on('data', chunk => {
+      data += chunk;
+    });
+    appleResponse.on('end', () => {
+      res.json(JSON.parse(data));
+    });
+  });
+
+  appleRequest.on('error', e => {
+    console.error(`Problem with merchant validation request: ${e.message}`);
+    res.status(500).send('Error contacting Apple Pay server.');
+  });
+
+  appleRequest.write(
+    JSON.stringify({
+      merchantIdentifier: 'merchant.com.example', //replace your merchant id with apple developer account
+      domainName: 'localhost',
+      displayName: 'Your Store',
+    })
+  );
+  appleRequest.end();
 });
 
 module.exports = router;

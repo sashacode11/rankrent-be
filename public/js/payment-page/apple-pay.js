@@ -1,38 +1,44 @@
-// Function to show the Apple Pay button
-function showApplePayButton() {
+document.addEventListener('DOMContentLoaded', function () {
   if (window.ApplePaySession) {
     if (ApplePaySession.canMakePayments()) {
-      var applePayBtn = ApplePaySession.createButton({ style: 'black' }); // Choose style as needed
-      applePayBtn.addEventListener('click', applePayButtonClicked);
-      document.getElementById('apple-pay-button').appendChild(applePayBtn);
+      const applePayButton = ApplePaySession.createButton({
+        style: 'black',
+      });
+      applePayButton.addEventListener('click', startApplePaySession);
+      document.getElementById('apple-pay-button').appendChild(applePayButton);
     } else {
-      console.log('Apple Pay is not available');
+      console.log('Apple Pay is not available on this device.');
     }
   }
-}
+});
 
-// Function called when Apple Pay button is clicked
-function applePayButtonClicked() {
-  // Start Apple Pay Session here
-  console.log('Apple Pay button clicked');
-  // Add Apple Pay Session handling logic here
-}
+function startApplePaySession() {
+  const session = new ApplePaySession(3, {
+    countryCode: 'US',
+    currencyCode: 'USD',
+    supportedNetworks: ['visa', 'masterCard', 'amex'],
+    merchantCapabilities: ['supports3DS'],
+    total: { label: 'Your Shop', amount: '10.00' },
+  });
 
-// Function to load the Apple Pay SDK once
-function loadApplePayScript() {
-  if (!window.applePayScriptLoaded) {
-    var script = document.createElement('script');
-    script.onload = function () {
-      window.applePayScriptLoaded = true; // Set a flag to indicate the script has been loaded
-      showApplePayButton(); // Show the Apple Pay button after loading the script
-    };
-    script.src = 'https://applepay.cdn-apple.com/jsapi/v1/apple-pay-sdk.js';
-    script.async = true;
-    document.head.appendChild(script);
-  } else {
-    showApplePayButton(); // If already loaded, just show the button
-  }
-}
+  session.onvalidatemerchant = event => {
+    fetch('/validate-merchant', {
+      method: 'POST',
+      body: JSON.stringify({ validationURL: event.validationURL }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(response => response.json())
+      .then(data => session.completeMerchantValidation(data))
+      .catch(err => console.error('Merchant validation failed:', err));
+  };
 
-// Asynchronously load the Apple Pay JS after the DOM content is fully loaded
-document.addEventListener('DOMContentLoaded', loadApplePayScript);
+  session.onpaymentauthorized = event => {
+    console.log('Payment authorized by user:', event.payment);
+    session.completePayment(ApplePaySession.STATUS_SUCCESS);
+    // Here you would send payment data to your server to process and confirm the payment
+  };
+
+  session.begin();
+}
