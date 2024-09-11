@@ -4,7 +4,7 @@ const expressLayout = require('express-ejs-layouts');
 const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
-const https = require('https');
+// const https = require('https');
 const fs = require('fs');
 
 const app = express();
@@ -22,7 +22,7 @@ const certificate = fs.readFileSync(certificatePath, 'utf8');
 const credentials = { key: privateKey, cert: certificate };
 
 // Create HTTPS server with credentials
-const httpsServer = https.createServer(credentials, app);
+// const httpsServer = https.createServer(credentials, app);
 
 // Templating engine
 app.use(expressLayout);
@@ -36,6 +36,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use('/', require('./server/routes/main'));
 
-httpsServer.listen(PORT, () => {
+app.listen(PORT, () => {
   console.log(`HTTPS Server is running on port ${PORT}`);
 });
