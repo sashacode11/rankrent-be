@@ -1,17 +1,16 @@
 # rankrent-be
+```
 npm init -y<br/>
-npm i express
-npm i --save-dev nodemon
-npm i ejs
-#npm i express pug
-npm i csv-parser
-npm i js-yaml
-npm i mysql
-npm i nodemailer
-
-
+npm i express<br/>
+npm i --save-dev nodemon<br/>
+npm i ejs<br/>
+#npm i express pug<br/>
+npm i csv-parser<br/>
+npm i js-yaml<br/>
+npm i mysql<br/>
+npm i nodemailer<br/>
 npm run devStart
-
+```
 
 Step-by-Step Guide to Setup MariaDB
 
