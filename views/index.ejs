@@ -55,7 +55,7 @@
         <select class="form-control" id="customerEmail" name="customerEmail" required>
             <option value="">Select a Customer</option>
             <% customers.forEach(function(customer) { %>
-                <option value="<%= customer.EmailAddress %>"><%= customer.CustomerName %> - <%= customer.EmailAddress %></option>
+                <option value="<%= customer.EmailAddress %>;<%= customer.CustomerName %>"><%= customer.CustomerName %> - <%= customer.EmailAddress %></option>
             <% }); %>
         </select>
 
@@ -102,6 +102,7 @@
                 <span class="value" id="modalCustomer"></span>
                  <!-- Hidden input to hold the email -->
                 <input type="hidden" id="modalCustomerEmail" name="customerEmail" value="">
+                <input type="hidden" id="modalCustomerName" name="customerName" value="">
             </div>
             <div class="modal-row modal-subtotal">
                 <span class="label">Subtotal:</span>

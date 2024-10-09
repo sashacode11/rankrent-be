@@ -1,52 +1,100 @@
-<!-- views/invoice-email.ejs -->
+<!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
     <style>
+
         .email-container {
-            font-family: 'Open Sans', sans-serif;
-            font-size: 18px;
-            line-height: 24px;
-            font-weight: 400;
-            font-style: normal;
-            color: #2c2c2e !important;
-            padding: 0;
-            border-spacing: 0;
-            border-collapse: collapse;
-        }
-
-        span.im {
-            color: #2c2c2e !important;
-        }
-
-        .btn-search {
-            font-family: Montserrat, sans-serif;
-            line-height: 62px;
+            width: 600px;
+            margin: 40px auto;
+            background-color: #ffffff;
+            padding: 20px;
             border-radius: 8px;
-            display: table;
-            width: 269px;
+            /* box-shadow: 0 4px 8px rgba(0,0,0,0.1); */
+            /* width: 100%; */
+            border: #cccccc 1px solid;
+        }
+
+        .invoice-table {
+            background-color: #eeeeee;
+            padding: 20px;
             text-align: center;
-            background: linear-gradient(94deg, #ffb45c 4.92%, #ff8c34 94.42%);
-            text-decoration: none !important;
-            font-size: 20px !important;
-            font-weight: 700 !important;
-            color: #000 !important;
-            margin: 31px auto 48px !important;
+            align-items: center;
+        }
+
+        header {
+            color: #244189;
+        }
+
+        header h1 {
+            margin-top: 0 !important;
+            padding-top: 0 !important;
+        }
+
+        h2 {
+            color: #333;
+            /* font-size: 24px; */
+        }
+
+        p {
+            color: #666;
+            /* font-size: 16px; */
+            line-height: 1.5;
+        }
+
+        a.btn-search {
+            display: inline-block;
+            background-color: #244189;
+            color: #ffffff;
+            padding: 12px 24px;
+            text-align: center;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        li:last-child {
+            border-bottom: none;
+        }
+
+        strong {
+            color: #333;
         }
     </style>
 </head>
 <body>
     <div class="email-container">
-        <h2 style="color: #2c2c2e !important;">Your Invoice Details</h2>
-        <p style="color: #2c2c2e !important;">Hello,</p>
-        <p style="color: #2c2c2e !important;">Please review your order details and proceed to payment:</p>
+        <header>
+            <h1>Inquirita</h1>
+        </header>
+        <h2>Your Invoice Details</h2>
+        <p>Dear <%= customerName %>,</p>
+        <p>Here is your order details and proceed to payment:</p>
         <ul>
             <li><strong>Term:</strong> <%= term %></li>
             <li><strong>Region:</strong> <%= region %></li>
-            <li style="color: #2c2c2e !important;"><strong>Niche:</strong> <%= niche %></li>
+            <li><strong>Niche:</strong> <%= niche %></li>
             <li><strong>Locality:</strong> <%= locality %></li>
             <li><strong>Subtotal:</strong> US$ <%= subtotal %></li>
         </ul>
-        <p><a href="<%= paymentLink %>" class="btn-search">Pay Now ></a></p>
+        <p><a href="<%= paymentLink %>" class="btn-search">Pay Now</a></p>
+        <p>
+           If you have any question or request relating to your invoice, please contact us at (+1) 123 456 78 for support. <br>
+           <br>
+           Thank you, <br>
+           Inquirita 
+        </p>
     </div>
+    <span style="opacity: 0"> {{ Date.now() }} </span>
 </body>
 </html>

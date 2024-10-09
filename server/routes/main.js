@@ -118,6 +118,7 @@ router.post('/send-email', async (req, res) => {
   try {
     // Render the EJS file to HTML
     const html = await ejs.renderFile(ejsFilePath, {
+      customerName: req.body.customerName,
       term: req.body.term,
       region: req.body.region,
       niche: req.body.niche,
@@ -153,10 +154,11 @@ router.get('/send-email-status', (req, res) => {
 });
 
 router.get('/pay-invoice', (req, res) => {
-  const { term, region, niche, locality, subtotal } = req.query;
+  const { customerName, term, region, niche, locality, subtotal } = req.query;
   //   console.log('Subtotal from query:', subtotal);
 
   res.render('pay-invoice', {
+    customerName,
     term,
     region,
     niche,
@@ -166,43 +168,43 @@ router.get('/pay-invoice', (req, res) => {
 });
 
 // Apple Pay
-router.post('/validate-merchant', (req, res) => {
-  const applePayValidationURL = req.body.validationURL;
+// router.post('/validate-merchant', (req, res) => {
+//   const applePayValidationURL = req.body.validationURL;
 
-  const options = {
-    hostname: new URL(applePayValidationURL).hostname,
-    path: new URL(applePayValidationURL).pathname,
-    method: 'POST',
-    key: fs.readFileSync(path.join(__dirname, 'keys', 'merchant.key')),
-    cert: fs.readFileSync(path.join(__dirname, 'keys', 'merchant.crt')),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  };
+//   const options = {
+//     hostname: new URL(applePayValidationURL).hostname,
+//     path: new URL(applePayValidationURL).pathname,
+//     method: 'POST',
+//     key: fs.readFileSync(path.join(__dirname, 'keys', 'merchant.key')),
+//     cert: fs.readFileSync(path.join(__dirname, 'keys', 'merchant.crt')),
+//     headers: {
+//       'Content-Type': 'application/json',
+//     },
+//   };
 
-  const appleRequest = https.request(options, appleResponse => {
-    let data = '';
-    appleResponse.on('data', chunk => {
-      data += chunk;
-    });
-    appleResponse.on('end', () => {
-      res.json(JSON.parse(data));
-    });
-  });
+//   const appleRequest = https.request(options, appleResponse => {
+//     let data = '';
+//     appleResponse.on('data', chunk => {
+//       data += chunk;
+//     });
+//     appleResponse.on('end', () => {
+//       res.json(JSON.parse(data));
+//     });
+//   });
 
-  appleRequest.on('error', e => {
-    console.error(`Problem with merchant validation request: ${e.message}`);
-    res.status(500).send('Error contacting Apple Pay server.');
-  });
+//   appleRequest.on('error', e => {
+//     console.error(`Problem with merchant validation request: ${e.message}`);
+//     res.status(500).send('Error contacting Apple Pay server.');
+//   });
 
-  appleRequest.write(
-    JSON.stringify({
-      merchantIdentifier: 'merchant.com.example', //replace your merchant id with apple developer account
-      domainName: 'localhost',
-      displayName: 'Your Store',
-    })
-  );
-  appleRequest.end();
-});
+//   appleRequest.write(
+//     JSON.stringify({
+//       merchantIdentifier: 'merchant.com.example', //replace your merchant id with apple developer account
+//       domainName: 'localhost',
+//       displayName: 'Your Store',
+//     })
+//   );
+//   appleRequest.end();
+// });
 
 module.exports = router;

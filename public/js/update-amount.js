@@ -4,8 +4,11 @@ document
     event.preventDefault(); // Prevent the form from submitting normally
 
     // Fetch values from the form
-    const customerEmail = document.getElementById('customerEmail').value;
+    const emailSelectedValue = document.getElementById('customerEmail').value;
+    // const customerEmail = document.getElementById('customerEmail').value;
+    const [customerEmail, customerName] = emailSelectedValue.split(';');
     const modalCustomerEmail = document.getElementById('modalCustomerEmail');
+    const modalCustomerName = document.getElementById('modalCustomerName');
     const modalCustomer = document.getElementById('modalCustomer');
 
     // Fetch term selection and multiplier
@@ -63,10 +66,12 @@ document
     document.getElementById('hiddenLocality').value = locality;
     document.getElementById('hiddenSubtotal').value = subtotal.toFixed(2);
     document.getElementById('modalCustomerEmail').value = customerEmail;
+    document.getElementById('modalCustomerName').value = customerName;
     document.getElementById('modalCustomer').textContent = customerEmail;
 
     if (customerEmail) {
       modalCustomerEmail.value = customerEmail;
+      modalCustomerName.value = customerName;
       modalCustomer.textContent = customerEmail;
     }
 
