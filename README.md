@@ -1,164 +1,147 @@
 # rankrent-be
 
-Datebase of rankrent-fe storing information of invoice locni and sending to user email using express and MariaDB
+Billing and invoicing backend for a rank-and-rent local lead generation business. Manages customers, subscription terms and per-niche pricing, generates invoices, and delivers them by email.
 
-```
-npm init -y
-npm i express
-npm i --save-dev nodemon
-npm i ejs
-#npm i express pug
-npm i csv-parser
-npm i js-yaml
-npm i mysql
-npm i nodemailer
-npm run devStart
-```
+Express + MariaDB, containerised with Docker. Serves the API and data layer behind the rankrent frontend.
 
-Step-by-Step Guide to Setup MariaDB
+## What it does
 
-Step 1: Install MariaDB
-Ensure MariaDB is installed on your server. Installation guides and downloads can be found on the MariaDB official website.
+A rank-and-rent operation runs local service websites — one per niche, per locality — and rents each to a business in that market. Billing gets awkward fast: pricing varies by both niche and subscription length, customers renew on different cycles, and invoices need to go out reliably without manual work.
 
-Step 2: Create the Database and Table
-You can use the following SQL commands to create your database and customer table:
+This service owns that side of it:
 
-```
-mysql -u root -p
-```
+- **Customer records** — accounts and contact details
+- **Term-based pricing** — 1, 3, 6 and 12 month subscription terms
+- **Per-niche rates** — pricing resolved from the niche and term together, not a flat rate
+- **Locality and niche catalogue** — driven by `locality.csv` and the definitions in `niches/`
+- **Invoice generation** — rendered server-side with EJS
+- **Email delivery** — invoices sent via nodemailer
+- **Apple Pay support** — HTTPS with a self-signed certificate for local development
 
-```
-CREATE DATABASE InquiritaBilling;
+## Tech stack
 
-USE InquiritaBilling;
+| Layer | Choice |
+|---|---|
+| Runtime | Node.js |
+| Framework | Express |
+| Database | MariaDB |
+| Templating | EJS |
+| Email | nodemailer |
+| Data ingest | csv-parser, js-yaml |
+| Container | Docker |
 
+## Data model
+
+Pricing is normalised across three tables rather than stored per customer, so a rate change is one row update instead of a migration.
+
+```sql
 CREATE TABLE Customers (
     CustomerNumber INT AUTO_INCREMENT PRIMARY KEY,
-    CustomerName VARCHAR(255) NOT NULL,
-    EmailAddress VARCHAR(255) NOT NULL UNIQUE
+    CustomerName   VARCHAR(255) NOT NULL,
+    EmailAddress   VARCHAR(255) NOT NULL UNIQUE
 );
-```
 
-Step 3: Inserting Data
-To add data to your Customers table:
-
-```
-INSERT INTO Customers (CustomerName, EmailAddress) VALUES ('John Doe', 'john.doe@example.com');
-```
-
-Step 4: Querying Data
-To retrieve data from your Customers table:
-
-```
-SELECT * FROM Customers;
-```
-
-Adding table data in InquiritaBilling
-
-Step 1: Ensure the Database is Selected
-
-```
-USE InquiritaBilling;
-```
-
-Step 2: Create the TermAmounts Table
-Here’s the SQL command to create the TermAmounts table:
-
-```
 CREATE TABLE TermAmounts (
     termId INT AUTO_INCREMENT PRIMARY KEY,
-    term VARCHAR(50),
+    term   VARCHAR(50),
     amount DECIMAL(10, 2)
 );
-```
 
-Step 4: Verify Table Creation
-
-```
-DESCRIBE TermAmounts;
-```
-
-Step 5: Insert Initial Data
-
-```
-INSERT INTO TermAmounts (term, amount) VALUES
-('1 month', 100.00),
-('3 months', 280.00),
-('6 months', 550.00),
-('12 months', 1000.00);
-```
-
-Step 6: Querying data
-
-```
-SELECT * FROM TermAmounts;
-```
-
-Adding Locni table in InquiritaBilling
-
-Step 1: Create a New Table for Locni Types
-
-```
 CREATE TABLE LocniTypes (
-    locniId INT AUTO_INCREMENT PRIMARY KEY,
+    locniId   INT AUTO_INCREMENT PRIMARY KEY,
     locniType VARCHAR(100)
 );
-```
 
-Step 2: Insert Locni Types
-
-```
-INSERT INTO LocniTypes (locniType) VALUES ('CPA'), ('Tree Service');
-```
-
-Step 3: Create a New Pricing Table
-
-```
 CREATE TABLE LocniPricing (
     pricingId INT AUTO_INCREMENT PRIMARY KEY,
-    termId INT,
-    locniId INT,
-    amount DECIMAL(10, 2),
-    FOREIGN KEY (termId) REFERENCES TermAmounts(termId),
+    termId    INT,
+    locniId   INT,
+    amount    DECIMAL(10, 2),
+    FOREIGN KEY (termId)  REFERENCES TermAmounts(termId),
     FOREIGN KEY (locniId) REFERENCES LocniTypes(locniId)
 );
 ```
 
-Step 4: Insert Pricing Data
+Resolving a price for a given niche and term:
 
-```
-INSERT INTO LocniPricing (termId, locniId, amount) VALUES
-(1, 1, 120.00),  -- 1 month for CPA
-(1, 2, 110.00),  -- 1 month for Tree Service
-(2, 1, 300.00),  -- 3 months for CPA
-(2, 2, 280.00),  -- 3 months for Tree Service
-(3, 1, 600.00),  -- 6 months for CPA
-(3, 2, 550.00),  -- 6 months for Tree Service
-(4, 1, 1100.00), -- 12 months for CPA
-(4, 2, 1000.00); -- 12 months for Tree Service
-```
-
-Step 5: Querying the Pricing Data
-
-```
+```sql
 SELECT t.term, l.locniType, p.amount
 FROM LocniPricing p
-JOIN TermAmounts t ON p.termId = t.termId
-JOIN LocniTypes l ON p.locniId = l.locniId
-WHERE l.locniType = 'CPA' AND t.term = '3 months';
+JOIN TermAmounts t ON p.termId  = t.termId
+JOIN LocniTypes  l ON p.locniId = l.locniId
+WHERE l.locniType = ? AND t.term = ?;
 ```
 
-Using OpenSSL to Generate a Self-Signed Certificate to Integrate Apple Pay
-Step 1: Generate a Private Key
+## Setup
+
+### 1. Install dependencies
+
+```bash
+npm install
+```
+
+### 2. Create the database
+
+```bash
+mysql -u root -p
+```
+
+```sql
+CREATE DATABASE RankRentBilling;
+USE RankRentBilling;
+-- then run the schema above
+```
+
+Seed the reference tables:
+
+```sql
+INSERT INTO TermAmounts (term, amount) VALUES
+  ('1 month', 0.00), ('3 months', 0.00),
+  ('6 months', 0.00), ('12 months', 0.00);
+
+INSERT INTO LocniTypes (locniType) VALUES ('CPA'), ('Tree Service');
+```
+
+Then populate `LocniPricing` with your own rates for each term and niche combination.
+
+### 3. Environment variables
 
 ```
+DB_HOST=
+DB_USER=
+DB_PASSWORD=
+DB_NAME=RankRentBilling
+SMTP_HOST=
+SMTP_USER=
+SMTP_PASSWORD=
+```
+
+### 4. Local HTTPS certificate
+
+Apple Pay requires HTTPS, so local development needs a self-signed certificate. Generate one — do not commit the output:
+
+```bash
 openssl genrsa -out localhost.key 2048
-```
-
-This command creates a file named localhost.key containing your private key.
-
-Step 2: Generate a Self-Signed SSL Certificate
-
-```
 openssl req -new -x509 -key localhost.key -out localhost.crt -days 365 -subj "/CN=localhost"
 ```
+
+### 5. Run
+
+```bash
+npm run devStart
+```
+
+## Docker
+
+```bash
+docker build -t rankrent-be .
+docker run -p 3000:3000 --env-file .env rankrent-be
+```
+
+## Notes on some decisions
+
+**Pricing as a join, not a column.** Rates depend on both niche and term, which is a matrix rather than a list. Modelling it as `LocniPricing` keyed on two foreign keys means adding a niche or a term is a data change, not a schema change.
+
+**Server-rendered invoices.** Invoices are EJS templates rendered server-side rather than generated on a client. The invoice is a record that has to survive being emailed, so it can't depend on a browser to assemble it.
+
+**CSV and YAML as the source for localities and niches.** The site matrix changes more often than the code does. Keeping it in flat files that non-developers can edit avoids a deploy for every new market.
